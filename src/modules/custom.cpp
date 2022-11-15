@@ -29,15 +29,19 @@ void waybar::modules::Custom::delayWorker() {
   thread_ = [this] {
     for( int i : this->pid_children_ )
     {
+      g_message ("waiting [s]: %i", i);
       int status;
       waitpid(i, &status, 0);
+      g_message ("waiting [f]: %i", i);
     }
 
     this->pid_children_.clear();
 
     bool can_update = true;
     if (config_["exec-if"].isString()) {
+      g_message ("exec-if [s]: %s", config_["exec-if"].asCString());
       output_ = util::command::execNoRead(config_["exec-if"].asString());
+      g_message ("exec-if [f]: %s", config_["exec-if"].asCString());
       if (output_.exit_code != 0) {
         can_update = false;
         dp.emit();
@@ -45,7 +49,9 @@ void waybar::modules::Custom::delayWorker() {
     }
     if (can_update) {
       if (config_["exec"].isString()) {
+        g_message ("exec [s]: %s", config_["exec"].asCString());
         output_ = util::command::exec(config_["exec"].asString());
+        g_message ("exec [f]: %s", config_["exec"].asCString());
       }
       dp.emit();
     }

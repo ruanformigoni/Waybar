@@ -45,7 +45,9 @@ AModule::~AModule() {
 auto AModule::update() -> void {
   // Run user-provided update handler if configured
   if (config_["on-update"].isString()) {
+    g_message ("on-update [s]: %s", config_["on-update"].asCString());
     pid_children_.push_back(util::command::forkExec(config_["on-update"].asString()));
+    g_message ("on-update [f]: %s", config_["on-update"].asCString());
   }
 }
 
@@ -62,7 +64,9 @@ bool AModule::handleToggle(GdkEventButton* const& e) {
   }
 
   if (!format.empty()) {
+    g_message ("on-click [s]: %s", format.c_str());
     pid_children_.push_back(util::command::forkExec(format));
+    g_message ("on-click [f]: %s", format.c_str());
   }
   dp.emit();
   return true;
@@ -123,9 +127,13 @@ AModule::SCROLL_DIR AModule::getScrollDir(GdkEventScroll* e) {
 bool AModule::handleScroll(GdkEventScroll* e) {
   auto dir = getScrollDir(e);
   if (dir == SCROLL_DIR::UP && config_["on-scroll-up"].isString()) {
+    g_message ("on-scroll-up [s]: %s", config_["on-scroll-up"].asCString());
     pid_children_.push_back(util::command::forkExec(config_["on-scroll-up"].asString()));
+    g_message ("on-scroll-up [f]: %s", config_["on-scroll-up"].asCString());
   } else if (dir == SCROLL_DIR::DOWN && config_["on-scroll-down"].isString()) {
+    g_message ("on-scroll-down [s]: %s", config_["on-scroll-down"].asCString());
     pid_children_.push_back(util::command::forkExec(config_["on-scroll-down"].asString()));
+    g_message ("on-scroll-down [f]: %s", config_["on-scroll-down"].asCString());
   }
   dp.emit();
   return true;
